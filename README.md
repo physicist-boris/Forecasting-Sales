@@ -9,13 +9,13 @@ Aller d'abord dans le dossier src/ (racine du projet)
 ```
 cd src
 ```
-### 1-Éxecution dans le powershell
+### 1-Éxecution dans le powershell (Méthode 1)
 
 ```
 .\initial_setup.ps1
 ```
 
-### 2-Configuration manuelle
+### 2-Configuration manuelle (Méthode 2)
 
 #### Création de l'environnement conda 
 
@@ -75,7 +75,7 @@ Commande permettant de calculer la complexité cyclomatique du code.
 radon cc .
 ```
 
-### Exécutation des pipelines
+### Exécution des pipelines pour la prédiction (forecasting)
  
  A command line interface is made with fire to execute the nodes locally.
 ```
