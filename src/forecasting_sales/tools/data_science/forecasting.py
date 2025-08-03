@@ -11,7 +11,6 @@ class ForecastingConfig:
     """
 
     n_estimators: int
-    learning_rate: int
+    learning_rate: float
     max_depth: int
     random_state: int
-

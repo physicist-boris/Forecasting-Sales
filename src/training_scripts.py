@@ -1,66 +1,83 @@
 import pandas as pd
 import numpy as np
 import xgboost as xgb
-import lightgbm as lgb
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from sklearn.preprocessing import OneHotEncoder
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-from sklearn.preprocessing import LabelEncoder
-
 from pathlib import Path
 
-current_path = Path.cwd()
 
+current_path = Path.cwd()
 # Get the root directory
 root_directory = current_path
 print(root_directory)
 
 
-df = pd.read_csv(root_directory / "data" / "01_extracted_data" /"stores_sales_forecasting.csv", encoding="ISO-8859-1")
-df = df.drop(["Row ID", "Order ID", "Customer ID", "Product ID", "Country",
-              "Category", "Ship Mode", "Ship Date", "Customer Name", "Segment", "City",
-              "Postal Code", "Region", "Product Name", "Discount", "Profit"], axis=1)
+df = pd.read_csv(
+    root_directory / "data" / "01_extracted_data" / "stores_sales_forecasting.csv",
+    encoding="ISO-8859-1",
+)
+df = df.drop(
+    [
+        "Row ID",
+        "Order ID",
+        "Customer ID",
+        "Product ID",
+        "Country",
+        "Category",
+        "Ship Mode",
+        "Ship Date",
+        "Customer Name",
+        "Segment",
+        "City",
+        "Postal Code",
+        "Region",
+        "Product Name",
+        "Discount",
+        "Profit",
+    ],
+    axis=1,
+)
 
 
 print(df.columns)
-df = df.sort_values('Order Date')
-df['Order Date'] = pd.to_datetime(df['Order Date'])
-df_qte_pivot = df.groupby([
-    pd.Grouper(key='Order Date', freq='M'),
-     'Sub-Category'
-])['Quantity'].sum().unstack(fill_value=0)
+df = df.sort_values("Order Date")
+df["Order Date"] = pd.to_datetime(df["Order Date"])
+df_qte_pivot = (
+    df.groupby([pd.Grouper(key="Order Date", freq="M"), "Sub-Category"])["Quantity"]
+    .sum()
+    .unstack(fill_value=0)
+)
 
-df_ts_month = df.groupby(pd.Grouper(key='Order Date', freq='M'))['Sales'].sum()
+df_ts_month = df.groupby(pd.Grouper(key="Order Date", freq="M"))["Sales"].sum()
 
 df = df_qte_pivot.join(df_ts_month).reset_index()
-df['month'] = df['Order Date'].dt.month
-df['year'] = df['Order Date'].dt.year
+df["month"] = df["Order Date"].dt.month
+df["year"] = df["Order Date"].dt.year
 
 
 # Encodage cyclic du mois (saisonnalité annuelle)
-df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
-df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
+df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
+df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
 
 # Créer les lags pour intégrer l'historique (ici 1 à 12 mois)
 for lag in range(1, 7):
-    df[f'sales_lag_{lag}'] = df['Sales'].shift(lag)
+    df[f"sales_lag_{lag}"] = df["Sales"].shift(lag)
 
 # Tendance (trend) : on peut simplement utiliser l'ordre temporel
-df['trend'] = np.arange(len(df))
+df["trend"] = np.arange(len(df))
 
 # Supprimer les lignes avec NaN (car lags au début)
 df = df.dropna()
 
 
-
-df = df.drop(columns=['Order Date', 'month', 'year'])  # Garde uniquement features utiles
+df = df.drop(
+    columns=["Order Date", "month", "year"]
+)  # Garde uniquement features utiles
 
 print(df.head(10))
 
-"""
-X = df.drop(columns=['Sales'])
-y = df['Sales']
+X = df.drop(columns=["Sales"])
+y = df["Sales"]
 
 tscv = TimeSeriesSplit(n_splits=6)
 rmse_scores = []
@@ -70,19 +87,15 @@ for fold, (train_index, test_index) in enumerate(tscv.split(X), 1):
     y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
     model = xgb.XGBRegressor(
-        objective='reg:absoluteerror',
+        objective="reg:absoluteerror",
         n_estimators=3500,
         learning_rate=0.03,
         max_depth=19,
         random_state=42,
-       # early_stopping_rounds=30
+        # early_stopping_rounds=30
     )
 
-    model.fit(
-        X_train, y_train,
-        eval_set=[(X_test, y_test)],
-        verbose=False
-    )
+    model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
 
     preds = model.predict(X_test)
     mae = mean_absolute_error(y_test, preds)
@@ -94,12 +107,12 @@ for fold, (train_index, test_index) in enumerate(tscv.split(X), 1):
     rmse = np.sqrt(mean_squared_error(y_test, preds))
     rmse_scores.append(rmse)
 
-    print(f'Fold {fold} RMSE: {rmse:.2f}')
+    print(f"Fold {fold} RMSE: {rmse:.2f}")
 
-print(f'\nAverage RMSE: {np.mean(rmse_scores):.2f}')
+print(f"\nAverage RMSE: {np.mean(rmse_scores):.2f}")
 
 
-
+"""
 X = df.drop(columns=['Sales'])
 y = df['Sales']
 
@@ -145,7 +158,7 @@ for fold, (train_idx, test_idx) in enumerate(tscv.split(X), 1):
 
 print(f"\nAverage MAE: {np.mean(mae_scores):.2f}")
 print(f"Average RMSE: {np.mean(rmse_scores):.2f}")
-"""
+
 
 
 
@@ -188,3 +201,4 @@ for fold, (train_idx, test_idx) in enumerate(tscv.split(X), 1):
 
 print(f"\nAverage MAE: {np.mean(mae_scores):.2f}")
 print(f"Average RMSE: {np.mean(rmse_scores):.2f}")
+"""

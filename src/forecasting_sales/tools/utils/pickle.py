@@ -7,6 +7,7 @@ import pickle
 from typing import Any, Union
 from pathlib import Path
 
+
 def save(obj: Any, path: Union[str, Path]) -> None:
     """
     Saves the object as a pickle

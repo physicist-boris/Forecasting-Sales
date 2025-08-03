@@ -1,10 +1,13 @@
 import fire
 from forecasting_sales.pipeline_manager import Pipeline, NodesManager, StorageTypes
-from forecasting_sales.nodes.preprocessing.storage.local_storage import NodeLocalStorage as PreprocessingLocalStorage
+from forecasting_sales.nodes.preprocessing.storage.local_storage import (
+    NodeLocalStorage as PreprocessingLocalStorage,
+)
 from forecasting_sales.nodes.preprocessing.node import PreprocessNode
-from forecasting_sales.nodes.forecasting.storage.local_storage import NodeLocalStorage as ForecastingLocalStorage
+from forecasting_sales.nodes.forecasting.storage.local_storage import (
+    NodeLocalStorage as ForecastingLocalStorage,
+)
 from forecasting_sales.nodes.forecasting.node import ForecastingNode
-
 
 
 class Pipelines:

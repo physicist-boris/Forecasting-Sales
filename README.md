@@ -49,16 +49,6 @@ $env:PYTHONPATH = $pwd
 
 ## Configurations et commandes pour le développement
 
-### Testing
-
-
-```
-python -m pytest .\tests\unit --cov=forecasting_sales -v --cov-report=html
-```
-```
-python -m pytest .\tests\integration --cov=forecasting_sales -v --cov-report=html
-```
-
 ### Pre-commit
 
 Commande pour appliquer les pre-commit hooks sur tous les fichiers

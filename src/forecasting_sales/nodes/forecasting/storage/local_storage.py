@@ -12,15 +12,19 @@ from forecasting_sales.tools.utils.filesystem import root_directory
 
 class NodeLocalStorage(AbstractStorageNode):
     """
-    Classification Local node storage
+    Forecasting Local node storage
     """
 
     CHECKPOINT_FORECASTING = (
         root_directory() / "data" / "03_forecasting" / "forecasting_result.json"
     )
 
-    INPUT_DATA = root_directory() / "data" / "02_preprocessed_data" / "preprocessed_stores_sales_forecasting.csv"
-
+    INPUT_DATA = (
+        root_directory()
+        / "data"
+        / "02_preprocessed_data"
+        / "preprocessed_stores_sales_forecasting.csv"
+    )
 
     CONFIG_PATH = (
         root_directory() / "conf" / "local" / "forecasting" / "forecasting_config.json"
@@ -33,7 +37,8 @@ class NodeLocalStorage(AbstractStorageNode):
 
     @override
     def save_checkpoint(self: Self, dictionary_of_results: dict[str, int]) -> None:
-        with open(self.checkpoint_forecasting,
+        with open(
+            self.checkpoint_forecasting,
             "w",
             encoding="utf-8",
         ) as f:
@@ -41,7 +46,8 @@ class NodeLocalStorage(AbstractStorageNode):
 
     @override
     def load_checkpoint(self: Self) -> pd.DataFrame:
-        with open(self.checkpoint_forecasting,
+        with open(
+            self.checkpoint_forecasting,
             "r",
             encoding="utf-8",
         ) as f:
@@ -50,8 +56,8 @@ class NodeLocalStorage(AbstractStorageNode):
 
     def _load_artefact(self: Self) -> ForecastingConfig:
         with open(self.config_path, encoding="utf-8") as file:
-            forecasting_config = ForecastingConfig.from_dict(json.load(file))
-        return forecasting_config
+            forecasting_config = ForecastingConfig.from_dict(json.load(file))  # type: ignore[attr-defined]
+        return forecasting_config  # type: ignore[no-any-return]
 
     @override
     def load_source(self: Self) -> Tuple[pd.DataFrame, ForecastingConfig]:

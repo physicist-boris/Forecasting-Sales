@@ -7,7 +7,7 @@ class AbstractNode(ABC):
     """
     congig or blueprint class for all execution nodes
     """
-    @staticmethod
+
     @abstractmethod
     def process(*args: Any, **kwargs: Any) -> Any:
         """
