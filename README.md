@@ -1,6 +1,6 @@
 # Forecasting Sales
 
-![Prévision des ventes](src/data/03_forecasting/forecasting_sales_graph.png)
+<img src="src/data/03_forecasting/forecasting_sales_graph.png" alt="Prévision des ventes" style="width:60%;"/>
 
 ## Configuration intiale
 
