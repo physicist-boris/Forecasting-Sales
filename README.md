@@ -1,5 +1,7 @@
 # Forecasting Sales
 
+![Prévision des ventes](src/data/03_forecasting/forecasting_sales_graph.png)
+
 ## Configuration intiale
 
 Deux méthodes sont possibles.

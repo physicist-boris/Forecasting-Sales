@@ -14,3 +14,4 @@ class ForecastingConfig:
     learning_rate: float
     max_depth: int
     random_state: int
+    result_graphname: str

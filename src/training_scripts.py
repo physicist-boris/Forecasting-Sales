@@ -4,6 +4,7 @@ import xgboost as xgb
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 
 current_path = Path.cwd()
@@ -69,11 +70,10 @@ df["trend"] = np.arange(len(df))
 # Supprimer les lignes avec NaN (car lags au début)
 df = df.dropna()
 
-
+df_for_later = df.copy()
 df = df.drop(
     columns=["Order Date", "month", "year"]
 )  # Garde uniquement features utiles
-
 print(df.head(10))
 
 X = df.drop(columns=["Sales"])
@@ -110,6 +110,28 @@ for fold, (train_index, test_index) in enumerate(tscv.split(X), 1):
     print(f"Fold {fold} RMSE: {rmse:.2f}")
 
 print(f"\nAverage RMSE: {np.mean(rmse_scores):.2f}")
+
+# Affichage
+plt.figure(figsize=(10, 6))
+plt.plot(
+    df_for_later.iloc[-len(y_test) : :]["Order Date"],
+    y_test,
+    marker="o",
+    label="Ventes réelles",
+)
+plt.plot(
+    df_for_later.iloc[-len(y_test) : :]["Order Date"],
+    preds,
+    marker="s",
+    label="Ventes prédites",
+)
+plt.title(f"Prédiction vs Réel - MAPE: {mape:.2f}%")
+plt.xlabel("Mois")
+plt.ylabel("Ventes")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
 
 
 """

@@ -46,7 +46,7 @@ class PreprocessNode(AbstractNode):
         # Supprimer les lignes avec NaN (car lags au début)
         df = df.dropna()
         # Drop non-necessary columns
-        df_with_temporal_features = df.drop(columns=["Order Date", "month", "year"])
+        df_with_temporal_features = df.drop(columns=["month", "year"])
         return df_with_temporal_features
 
     @staticmethod

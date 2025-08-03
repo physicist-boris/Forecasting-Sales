@@ -1,5 +1,5 @@
 import numpy as np
-from typing_extensions import Self, override, Tuple, Any
+from typing_extensions import Self, override, Tuple, Any, Sized
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import TimeSeriesSplit
@@ -7,6 +7,10 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from forecasting_sales.nodes.base.abstract_node import AbstractNode
 from forecasting_sales.tools.data_science.forecasting import ForecastingConfig
 from forecasting_sales.tools.utils.logging import log_execution
+from forecasting_sales.nodes.forecasting.storage.local_storage import (
+    NodeLocalStorage as ForecastingLocalStorage,
+)
+import matplotlib.pyplot as plt
 
 
 class ForecastingNode(AbstractNode):
@@ -25,6 +29,8 @@ class ForecastingNode(AbstractNode):
         """
         Process execution
         """
+        df_with_date = df_to_train.copy()
+        df_to_train = df_to_train.drop(columns=["Order Date"])
         X = df_to_train.drop(columns=["Sales"])
         y = df_to_train["Sales"]
         tscv = TimeSeriesSplit(n_splits=6)
@@ -35,11 +41,12 @@ class ForecastingNode(AbstractNode):
             y_train, y_test = y.iloc[train_index], y.iloc[test_index]
             training_data_set = (X_train, X_test, y_train, y_test)
             xgb_model = self._train(training_data_set, config_params)
-            self._predict(xgb_model, X_test, y_test, dict_of_results)
+            results_tuple = self._predict(xgb_model, X_test, y_test, dict_of_results)
         # keeping the last fold (production like)
         dict_of_results["MAE"] = dict_of_results["MAE"][-1]
         dict_of_results["MAPE(en %)"] = dict_of_results["MAPE(en %)"][-1]
         dict_of_results["rmse"] = dict_of_results["rmse"][-1]
+        self._plot_results(df_with_date, y_test, results_tuple, config_params)
         return (dict_of_results,)
 
     @staticmethod
@@ -72,7 +79,7 @@ class ForecastingNode(AbstractNode):
         X_test_data: pd.DataFrame,
         y_test_data: pd.DataFrame,
         dictionary_of_results: dict[str, list[int]],
-    ) -> None:
+    ) -> Tuple[Sized, float]:
         """
         Method for predicting and calculating prediction scores
         """
@@ -86,3 +93,36 @@ class ForecastingNode(AbstractNode):
         dictionary_of_results["MAE"].append(mae)
         dictionary_of_results["MAPE(en %)"].append(mape)
         dictionary_of_results["rmse"].append(rmse)
+        return (preds, mape)
+
+    @staticmethod
+    def _plot_results(
+        df_dated: pd.DataFrame,
+        y_test_data: pd.DataFrame,
+        tuple_of_results: Tuple[Sized, float],
+        params: ForecastingConfig,
+    ) -> None:
+        plt.figure(figsize=(10, 6))
+        plt.plot(
+            df_dated.iloc[-len(y_test_data) : :]["Order Date"],
+            y_test_data,
+            marker="o",
+            label="Ventes réelles",
+        )
+        plt.plot(
+            df_dated.iloc[-len(y_test_data) : :]["Order Date"],
+            tuple_of_results[0],  # type: ignore[arg-type]
+            marker="s",
+            label="Ventes prédites",
+        )
+        plt.title(f"Prédiction vs Réel - MAPE: {tuple_of_results[1]:.2f}%")
+        plt.xlabel("Mois")
+        plt.ylabel("Ventes")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(
+            ForecastingLocalStorage().checkpoint_forecasting_folder
+            / params.result_graphname,
+            dpi=300,
+        )

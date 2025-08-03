@@ -19,6 +19,8 @@ class NodeLocalStorage(AbstractStorageNode):
         root_directory() / "data" / "03_forecasting" / "forecasting_result.json"
     )
 
+    CHECKPOINT_FORECASTING_FOLDER = root_directory() / "data" / "03_forecasting"
+
     INPUT_DATA = (
         root_directory()
         / "data"
@@ -33,6 +35,9 @@ class NodeLocalStorage(AbstractStorageNode):
     def __init__(self: Self) -> None:
         self.input_data = NodeLocalStorage.INPUT_DATA
         self.checkpoint_forecasting = NodeLocalStorage.CHECKPOINT_FORECASTING
+        self.checkpoint_forecasting_folder = (
+            NodeLocalStorage.CHECKPOINT_FORECASTING_FOLDER
+        )
         self.config_path = NodeLocalStorage.CONFIG_PATH
 
     @override
