@@ -13,6 +13,9 @@ cd src
 ```
 ### 1-Éxecution dans le powershell (Méthode 1)
 
+(Assurez vous que le ExecutionPolicy défini sur votre Powershell vous permette de lancer un script .ps1,
+Sinon utilisez la Méthode 2)
+
 ```
 .\initial_setup.ps1
 ```
@@ -51,6 +54,13 @@ $env:PYTHONPATH = $pwd
 
 ## Configurations et commandes pour le développement
 
+### Exécution des pipelines pour la prédiction (forecasting)
+ 
+A command line interface is made with fire to execute the nodes locally.
+```
+python .\run.py all
+```
+
 ### Pre-commit
 
 Commande pour appliquer les pre-commit hooks sur tous les fichiers
@@ -65,13 +75,6 @@ Commande permettant de calculer la complexité cyclomatique du code.
 
 ```
 radon cc .
-```
-
-### Exécution des pipelines pour la prédiction (forecasting)
- 
- A command line interface is made with fire to execute the nodes locally.
-```
-python .\run.py all
 ```
 
 ## Structure du code
