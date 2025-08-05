@@ -2,6 +2,9 @@
 
 <img src="src/data/03_forecasting/forecasting_sales_graph.png" alt="Prévision des ventes" style="width:75%;"/>
 
+
+Les résultats se trouvent dans le dossier src/data/03_forecasting/
+
 ## Configuration intiale
 
 Deux méthodes sont possibles.
@@ -45,7 +48,7 @@ pre-commit install
 ```
 #### Autres configurations
 
-Dans un conda PowerShell, configuré la variable d'environnement.
+Dans un conda PowerShell (celui de env forecasting-sales), configuré la variable d'environnement.
 
 Ajouter le lien de la racine (dossier src/) du projet dans le PYTHONPATH
 ```
