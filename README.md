@@ -48,9 +48,9 @@ pre-commit install
 ```
 #### Autres configurations
 
-Dans un conda PowerShell (celui de env forecasting-sales), configuré la variable d'environnement.
+Dans un conda PowerShell (celui de env forecasting-sales), configurez la variable d'environnement.
 
-Ajouter le lien de la racine (dossier src/) du projet dans le PYTHONPATH
+Dans la racine du projet (dossier src/), ajoutez le dossier courant au PYTHONPATH
 ```
 $env:PYTHONPATH = $pwd
 ```
@@ -59,7 +59,7 @@ $env:PYTHONPATH = $pwd
 
 ### Exécution des pipelines pour la prédiction (forecasting)
  
-A command line interface is made with fire to execute the nodes locally.
+Une interface en ligne de commande est créée avec Fire pour exécuter les nœuds localement.
 ```
 python .\run.py all
 ```
